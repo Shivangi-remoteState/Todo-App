@@ -11,9 +11,9 @@ func IsUserExists(email string) (bool, error) {
               where email =TRIM(LOWER($1)) 
               and archived_At is null `
 
-	var exists bool
-	err := database.DB.Get(&exists, query, email)
-	return exists, err
+	var UserExist bool
+	err := database.DB.Get(&UserExist, query, email)
+	return UserExist, err
 }
 
 func CreateUser(name, email, password string) (string, error) {

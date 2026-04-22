@@ -23,13 +23,14 @@ func CreateTodo(userID, name, description string, expiry_at time.Time) (models.T
 	var todo models.Todos
 	err := database.DB.Get(&todo, query, userID, name, description, expiry_at)
 	if err != nil {
+
 		return models.Todos{}, err
 	}
 
 	return todo, nil
 }
 
-func GetTodos(userID string, search string, complete *bool, pending bool) ([]models.Todos, error) {
+func GetTodos(userID string, search string, status string, limit, offset int) ([]models.Todos, error) {
 	query := `SELECT id,
                     user_id,
                     name,
@@ -44,27 +45,27 @@ func GetTodos(userID string, search string, complete *bool, pending bool) ([]mod
 	args := []interface{}{userID}
 	i := 2
 
-	//complete / incomplete
-	if complete != nil {
-		query += fmt.Sprintf(" AND complete = $%d", i)
-		args = append(args, *complete)
-		i++
-	}
-	//pending
-	if pending {
-		query += " AND complete = false AND expiry_at > NOW()"
-	}
+	//complete / incomplete / pending
+	switch status {
+	case "completed":
+		query += " AND complete = true"
 
+	case "pending":
+		query += " AND complete = false AND expiry_at > NOW()"
+
+	case "incomplete":
+		query += " AND complete = false AND expiry_at <= NOW()"
+	}
 	//search
 	if search != "" {
 		query += fmt.Sprintf(" AND name ILIKE $%d", i)
 		args = append(args, "%"+search+"%")
 		i++
 	}
+	query += fmt.Sprintf(" ORDER BY expiry_at LIMIT $%d OFFSET $%d", i, i+1)
+	args = append(args, limit, offset)
 
-	query += " ORDER BY expiry_at"
-
-	var todos []models.Todos
+	todos := make([]models.Todos, 0)
 	err := database.DB.Select(&todos, query, args...)
 	if err != nil {
 		return nil, err
@@ -151,7 +152,7 @@ func UpdateTodo(req models.UpdateTodo, todoID, userID string) error {
 }
 
 func DeleteTodoByID(todoID, userID string) error {
-	query := `UPDATE FROM todos 
+	query := `UPDATE todos 
               SET archived_at = NOW()
               WHERE id = $1 
               AND user_id = $2

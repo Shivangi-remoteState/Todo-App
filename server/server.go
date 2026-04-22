@@ -2,6 +2,7 @@ package server
 
 import (
 	"mytodoApp/handler"
+	"mytodoApp/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,9 +13,12 @@ func Start() {
 	//routes
 	r.POST("/register", handler.RegisterUser)
 	r.POST("/login", handler.LoginUser)
-	r.PATCH("/logout", handler.LogoutUser)
+
+	auth := r.Group("/")
+	auth.Use(middleware.AuthMiddleware())
+	auth.POST("/logout", handler.LogoutUser)
 	//r.GET("/todos", handler.GetTodos)
-	todo := r.Group("/")
+	todo := auth.Group("/")
 	{
 		todo.POST("/todo", handler.CreateTodo)
 		todo.GET("/todos", handler.GetTodos)

@@ -30,7 +30,7 @@ func RegisterUser(c *gin.Context) {
 	}
 	if exists {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "user already exists",
+			"error": "user already exist",
 		})
 		return
 	}
@@ -101,13 +101,13 @@ func LoginUser(c *gin.Context) {
 
 // logout
 func LogoutUser(c *gin.Context) {
-	token := c.GetHeader("Authorization")
-	if token == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "unauthorized missing token",
-		})
-		return
-	}
+	token := c.GetString("token")
+	//if token == "" {
+	//	c.JSON(http.StatusUnauthorized, gin.H{
+	//		"error": "unauthorized missing token",
+	//	})
+	//	return
+	//}
 	err := dbHelper.ArchivedUserSession(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
