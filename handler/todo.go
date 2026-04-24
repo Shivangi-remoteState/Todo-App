@@ -11,7 +11,6 @@ import (
 )
 
 func CreateTodo(c *gin.Context) {
-
 	var req models.CreateTodo
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -74,6 +73,7 @@ func GetTodos(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid status query",
 		})
+		return
 	}
 
 	todos, err := dbHelper.GetTodos(userID, search, status, limit, offset)
@@ -81,6 +81,7 @@ func GetTodos(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -107,6 +108,7 @@ func GetTodoByID(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "todo not found",
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, todo)
@@ -160,7 +162,7 @@ func DeleteTodoByID(c *gin.Context) {
 	todoID := c.Param("id")
 	if todoID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "todo id requires",
+			"error": "todo id required",
 		})
 		return
 	}

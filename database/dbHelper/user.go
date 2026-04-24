@@ -5,15 +5,15 @@ import (
 	"mytodoApp/database"
 )
 
-func IsUserExists(email string) (bool, error) {
+func IsUserExist(email string) (bool, error) {
 	query := `SELECT count(*)>0
               FROM users 
               where email =TRIM(LOWER($1)) 
               and archived_At is null `
 
-	var UserExist bool
-	err := database.DB.Get(&UserExist, query, email)
-	return UserExist, err
+	var IsUserExist bool
+	err := database.DB.Get(&IsUserExist, query, email)
+	return IsUserExist, err
 }
 
 func CreateUser(name, email, password string) (string, error) {
@@ -66,11 +66,10 @@ func GetUserBYEmail(email string) (string, string, error) {
 	userID = result.ID
 	password = result.Password
 	return userID, password, nil
-
 }
 
 // logout
-func ArchivedUserSession(token string) error {
+func ArchiveUserSession(token string) error {
 	query := `UPDATE user_session
               set archived_at = NOW()
               where id = $1
@@ -90,7 +89,7 @@ func ArchivedUserSession(token string) error {
 	return nil
 }
 
-func ValidateSession(token string) (string, error) {
+func GetUserIDBySessionID(token string) (string, error) {
 	query := `SELECT user_id FROM user_session WHERE id = $1 and archived_AT is null`
 	var userID string
 

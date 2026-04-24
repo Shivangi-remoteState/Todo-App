@@ -1,5 +1,5 @@
 BEGIN;
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 -- user table
 CREATE TABLE users (
     id UUID primary key default gen_random_uuid(),
@@ -15,7 +15,7 @@ CREATE TABLE todos (
     user_id UUID  references users(id),
     name TEXT not null ,
     description TEXT,
-    complete BOOLEAN default false,
+    complete BOOLEAN default false, // is_complete
     created_at TIMESTAMP default NOW()
 
 );

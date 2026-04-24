@@ -20,7 +20,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		//	validate session
-		userID, err := dbHelper.ValidateSession(token)
+		userID, err := dbHelper.GetUserIDBySessionID(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Invalid token",

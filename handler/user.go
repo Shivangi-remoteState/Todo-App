@@ -21,15 +21,15 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	// check if user exists or not
-	exists, err := dbHelper.IsUserExists(user.Email)
+	exist, err := dbHelper.IsUserExist(user.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Server error",
 		})
 		return
 	}
-	if exists {
-		c.JSON(http.StatusBadRequest, gin.H{
+	if exist {
+		c.JSON(http.StatusConflict, gin.H{
 			"error": "user already exist",
 		})
 		return
@@ -76,6 +76,7 @@ func LoginUser(c *gin.Context) {
 		})
 		return
 	}
+
 	//check password
 	if err := utils.CheckPasswordHash(hashedPassword, req.Password); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -108,7 +109,7 @@ func LogoutUser(c *gin.Context) {
 	//	})
 	//	return
 	//}
-	err := dbHelper.ArchivedUserSession(token)
+	err := dbHelper.ArchiveUserSession(token)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "invalid session token",

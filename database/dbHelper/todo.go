@@ -56,9 +56,10 @@ func GetTodos(userID string, search string, status string, limit, offset int) ([
 	case "incomplete":
 		query += " AND complete = false AND expiry_at <= NOW()"
 	}
+	//AND (search = "" or name ILIKE $2 )
 	//search
 	if search != "" {
-		query += fmt.Sprintf(" AND name ILIKE $%d", i)
+		query += fmt.Sprintf(" AND name ILIKE $%d OR description ILIKE $%d", i, i)
 		args = append(args, "%"+search+"%")
 		i++
 	}

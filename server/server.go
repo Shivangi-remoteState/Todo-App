@@ -27,6 +27,8 @@ func Start() {
 		todo.DELETE("/todo/:id", handler.DeleteTodoByID)
 
 	}
-	//r.POST("/todo", handler.CreateTodo)
-	r.Run(":8080")
+	//r.Run("/todo", handler.CreateTodo)
+	if err := r.Run(":8080"); err != nil {
+		panic(err.Error())
+	}
 }
