@@ -15,7 +15,7 @@ CREATE TABLE todos (
     user_id UUID  references users(id),
     name TEXT not null ,
     description TEXT,
-    complete BOOLEAN default false, // is_complete
+    completed_at BOOLEAN default false,
     created_at TIMESTAMP default NOW()
 
 );

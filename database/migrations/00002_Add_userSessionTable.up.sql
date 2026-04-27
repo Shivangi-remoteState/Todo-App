@@ -15,4 +15,12 @@ ADD COLUMN expiry_at timestamp;
 ALTER TABLE todos
 ADD COLUMN archived_at timestamp;
 
+
+ALTER TABLE users
+Add COLUMN role TEXT DEFAULT 'user';
+
+ALTER TABLE users
+ADD COLUMN suspended_at TIMESTAMP;
+
+
 commit;

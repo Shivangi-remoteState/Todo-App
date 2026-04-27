@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"mytodoApp/database/dbHelper"
 	"mytodoApp/models"
 	"mytodoApp/utils"
@@ -82,6 +83,7 @@ func LoginUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "invalid credentials",
 		})
+		return
 	}
 
 	//	create session
@@ -93,23 +95,31 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
+	//generate jwt
+	token, err := utils.GenerateToken(userID, sessionID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to generate token",
+		})
+	}
+	fmt.Println("token", token)
 	//    response
 	c.JSON(http.StatusOK, gin.H{
-		"token":   sessionID,
+		"token":   token,
 		"message": "login successfully",
 	})
 }
 
 // logout
 func LogoutUser(c *gin.Context) {
-	token := c.GetString("token")
+	sessionID := c.GetString("sessionID")
 	//if token == "" {
 	//	c.JSON(http.StatusUnauthorized, gin.H{
 	//		"error": "unauthorized missing token",
 	//	})
 	//	return
 	//}
-	err := dbHelper.ArchiveUserSession(token)
+	err := dbHelper.ArchiveUserSession(sessionID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "invalid session token",

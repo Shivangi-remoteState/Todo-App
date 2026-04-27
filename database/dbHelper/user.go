@@ -48,24 +48,23 @@ func CreateUserSession(userID string) (string, error) {
 	return sessionID, nil
 }
 
-func GetUserBYEmail(email string) (string, string, error) {
-	query := `SELECT id, password 
+func GetUserBYEmail(email string) (string, string, string, error) {
+	query := `SELECT id, password, role 
               FROM users where email = TRIM(LOWER($1))
-              AND archived_At is null;`
-	var userID string
-	var password string
+              AND archived_At is null
+              AND suspended_at IS NULL`
 
 	var result struct {
 		ID       string `db:"id"`
 		Password string `db:"password"`
+		Role     string  `db:"role"`
 	}
 	err := database.DB.Get(&result, query, email)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	userID = result.ID
-	password = result.Password
-	return userID, password, nil
+
+	return result.ID, result.Password, result.Role,  nil
 }
 
 // logout
