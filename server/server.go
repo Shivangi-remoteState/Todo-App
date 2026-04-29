@@ -31,6 +31,7 @@ func Start() {
 	admin := auth.Group("/admin")
 	admin.Use(middleware.AdminOnly())
 	admin.GET("/todos", handler.GetAllTodos)
+	admin.GET("/users", handler.GetAllUsers)
 	admin.PATCH("/user/:id/suspend", handler.SuspendUser)
 	admin.PATCH("/user/:id/unsuspend", handler.UnsuspendUser)
 

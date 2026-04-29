@@ -51,6 +51,37 @@ func GetAllTodos(search, status string) ([]models.Todos, error) {
 	return todos, nil
 }
 
+func GetAllUsers(search string) ([]models.User, error) {
+
+	query := `SELECT id,
+	                 name,
+	                 email,
+	                 role,
+	                 created_at,
+	                 suspended_at
+	          FROM users
+	          WHERE archived_at IS NULL`
+
+	args := []interface{}{}
+	i := 1
+
+	if search != "" {
+		query += fmt.Sprintf(" AND (name ILIKE $%d OR email ILIKE $%d)", i, i)
+		args = append(args, "%"+search+"%")
+		i++
+	}
+
+	query += " ORDER BY created_at DESC"
+
+	users := []models.User{}
+	err := database.DB.Select(&users, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 // suspend user
 func SuspendUser(userID string) error {
 	tx, err := database.DB.Beginx()

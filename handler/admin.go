@@ -23,6 +23,24 @@ func GetAllTodos(c *gin.Context) {
 		"todos": todos,
 	})
 }
+
+func GetAllUsers(c *gin.Context) {
+
+	search := c.Query("search")
+
+	users, err := dbHelper.GetAllUsers(search)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to fetch users",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": users,
+	})
+}
+
 func SuspendUser(c *gin.Context) {
 
 	//	get user id from url
