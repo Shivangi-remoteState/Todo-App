@@ -17,7 +17,7 @@ func CreateTodo(userID, name, description string, expiry_at time.Time) (models.T
 	          user_id,
 	          name,
 	          description,
-	          complete,
+	          completed_at,
 	          expiry_at,
 	          created_at;`
 	var todo models.Todos
@@ -35,7 +35,7 @@ func GetTodos(userID string, search string, status string, limit, offset int) ([
                     user_id,
                     name,
                     description,
-                    complete,
+                    completed_at,
                     expiry_at,
                     created_at
             FROM todos
@@ -48,13 +48,13 @@ func GetTodos(userID string, search string, status string, limit, offset int) ([
 	//complete / incomplete / pending
 	switch status {
 	case "completed":
-		query += " AND complete = true"
+		query += " AND complete_at = true"
 
 	case "pending":
-		query += " AND complete = false AND expiry_at > NOW()"
+		query += " AND complete_at = false AND expiry_at > NOW()"
 
 	case "incomplete":
-		query += " AND complete = false AND expiry_at <= NOW()"
+		query += " AND complete_at = false AND expiry_at <= NOW()"
 	}
 	//AND (search = "" or name ILIKE $2 )
 	//search
@@ -79,7 +79,7 @@ func GetTodoByID(todoID, userID string) (*models.Todos, error) {
                      user_id,
                      name,
   				     description,
-					 complete,
+					 complete_at,
 					 expiry_at,
  					 created_at
              FROM todos

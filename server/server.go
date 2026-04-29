@@ -27,7 +27,15 @@ func Start() {
 		todo.DELETE("/todo/:id", handler.DeleteTodoByID)
 
 	}
+
+	admin := auth.Group("/admin")
+	admin.Use(middleware.AdminOnly())
+	admin.GET("/todos", handler.GetAllTodos)
+	admin.PATCH("/user/:id/suspend", handler.SuspendUser)
+	admin.PATCH("/user/:id/unsuspend", handler.UnsuspendUser)
+
 	//r.Run("/todo", handler.CreateTodo)
+
 	if err := r.Run(":8080"); err != nil {
 		panic(err.Error())
 	}

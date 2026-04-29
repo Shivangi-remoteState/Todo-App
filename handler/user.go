@@ -70,7 +70,7 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 	//get user from DB
-	userID, hashedPassword, err := dbHelper.GetUserBYEmail(req.Email)
+	userID, hashedPassword, role, err := dbHelper.GetUserBYEmail(req.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "invalid credentials",
@@ -96,7 +96,7 @@ func LoginUser(c *gin.Context) {
 	}
 
 	//generate jwt
-	token, err := utils.GenerateToken(userID, sessionID)
+	token, err := utils.GenerateToken(userID, sessionID, role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "failed to generate token",

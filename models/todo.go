@@ -7,7 +7,7 @@ type Todos struct {
 	UserId      string    `json:"user_id" db:"user_id"`
 	Name        string    `json:"name" db:"name" binding:"required"`
 	Description string    `json:"description" db:"description" binding:"required"`
-	Complete    string    `json:"complete" db:"complete"`
+	CompleteAt  string    `json:"completed_at" db:"completed_at"`
 	ExpiryAt    time.Time `json:"expiry_at" db:"expiry_at" binding:"required"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
